@@ -38,14 +38,21 @@ exports.getmessage = async (req, res) => {
         })
           
         const lastMessageId = req.params.lastMessageId;
-        console.log('last message id : ' , lastMessageId) ;
+       // console.log('last message id : ' , lastMessageId) ;
         let messages;
-        if (lastMessageId) {
-            messages = await Message.findAll({ where: { id: { [Op.gt]: lastMessageId } } } );
-        }else{
-            messages = await Message.findAll();
-        }
-        res.send(result,messages);
+        //if (lastMessageId) {
+            messages = await Message.findAll({ attributes:['message'],
+            include: [
+              {
+                model: User,
+                attributes: ['name'], // Include only the 'userName' attribute from the User model
+              },
+            ],
+        })
+        // }else{
+        //     messages = await Message.findAll();
+        // }
+        res.send(messages);
     }catch(err){
         console.log(err);
 }
