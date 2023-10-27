@@ -28,14 +28,14 @@ exports.signup = async (req,res,next)=>{
                     await User.create({name:name , email : email , password : hash , phone:phone})
                     res.status(201).json({message : 'signed up successfully'})
                 })
-
-
+                
+        
     }catch(err) {
             console.log(err)
             res.status(500).json({"msg" : err});
     }
-
-
+    
+    
 }
 
 exports.login = async (req,res,next)=>{
@@ -45,7 +45,7 @@ exports.login = async (req,res,next)=>{
             res.status(400).json({err : "bad  parameters"})
         }
         const users = await User.findAll({where: {email:email }});
-
+        
         if(users[0]){
             const user = users[0];
             bcrypt.compare(password,user.dataValues.password , async  (err, response )=>{

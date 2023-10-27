@@ -48,8 +48,8 @@
                     
                 const res = await axios.post('http://localhost:3000/signup', data);
                 alert('user created successfully')
-                console.log(res);
-
+                //console.log(res);
+                
                 } catch (error) {
                 console.error('Error sign up:', error);
                 }
@@ -57,6 +57,7 @@
                 try {
                 const res = await axios.post('http://localhost:3000/login', data);
                 console.log(res);
+                alert('user logged in successfully')
                 if(res.status===200){
                     localStorage.setItem('token',res.data.token);
                     window.location.href='/app';

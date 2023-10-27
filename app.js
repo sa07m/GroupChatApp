@@ -14,8 +14,8 @@ app.use(cors());
 app.use(express.static('public'));
 app.use(authroutes);
 
-sequelize.sync({force:true})
-//sequelize.sync()
+//sequelize.sync({force:true})
+sequelize.sync()
 .then(()=>{
     app.listen(process.env.PORT || 3000);
 })
