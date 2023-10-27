@@ -8,6 +8,11 @@ const jwt = require('jsonwebtoken');
 exports.home = (req,res,next)=>{
     res.sendFile(path.join(__dirname,  '../index.html'));
 }
+
+exports.log = (req,res,next)=>{
+    res.sendFile(path.join(__dirname,  '../login.html'));
+}
+
 exports.signup = async (req,res,next)=>{
     console.log(req.body)
     try{
@@ -40,7 +45,7 @@ exports.signup = async (req,res,next)=>{
 
 exports.login = async (req,res,next)=>{
     try{
-        const {name,email,password} = req.body ;
+        const {email,password} = req.body ;
         if( password == null || email == null || email.length === 0 || password.length === 0){
             res.status(400).json({err : "bad  parameters"})
         }
@@ -48,12 +53,12 @@ exports.login = async (req,res,next)=>{
         
         if(users[0]){
             const user = users[0];
-            bcrypt.compare(password,user.dataValues.password , async  (err, response )=>{
+            bcrypt.compare(password,user.password , async  (err, response )=>{
                 if(response == true){
-                    const token =  await jwt.sign({ id: user.dataValues.id , ispremiumuser : user.dataValues.ispremiumuser }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
+                    const token =  await jwt.sign({ id: user.id , ispremiumuser : user.ispremiumuser }, process.env.TOKEN_SECRET);
                     res.status(200).json({
                         message: 'Login successful',
-                        user: { username: req.body.username  },
+                        //user: { username: req.body.username  },
                         token : token
                      });
                 }else{

@@ -32,8 +32,7 @@
    
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        
-        let isSignUp = true;
+    
 
         document.getElementById('submitbtn').addEventListener('click', async function (event) {
             event.preventDefault();
@@ -43,12 +42,12 @@
                 password: document.getElementById('password').value,
                 phone: document.getElementById('phone').value,
             };
-            if (isSignUp) {
+        
                 try {
                     
                 const res = await axios.post('http://localhost:3000/signup', data);
                 alert('user created successfully')
-                window.href='/login'
+                window.location.href='/login'
                 
                 } catch (error) {
                     if(error.response.status===403){
@@ -56,26 +55,9 @@
                     alert(errorMessage)
                     }
                 }
-            }else{
-                try {
-                const res = await axios.post('http://localhost:3000/login', data);
-                console.log(res);
-               
-                if(res.status===200){
-                     alert('user logged in successfully')
-                    localStorage.setItem('token',res.data.token);
-                    window.location.href='/app';
-                }
+            })
+            
                 
-
-                } catch (error) {
-                console.error('Error login:', error);
-                if(error.response.status===403 || error.response.status===403  ){
-                        alert(error.response.data.msg)
-                }
-                }
-            }    
-        });
 
         document.getElementById('forgotbtn').addEventListener('click', async function (event) {
             event.preventDefault();
