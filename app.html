@@ -67,23 +67,41 @@
     //     };
     
 
-    // window.onload = function() {
+    window.onload = function() {
            
-    //         function fetchMessages() {
-    //             axios.get("http://localhost:3000/getmessage",{headers:{'Authorization':token}})
-    //             .then((response) => {
-    //                 const msgs = document.getElementById("msgs");
-    //                 msgs.innerHTML = '';
-    //                 response.data.forEach((message) => {
-    //                     const msgDiv = document.createElement("div");
-    //                     msgDiv.textContent = message.user.name+' :  '+ message.message;
-    //                     msgs.appendChild(msgDiv);
-    //                 });
-           
-    //             }).catch(err=> console.log('error fetching messages' , err));
-    //         }
-    //         setInterval(fetchMessages, 1000);
-    //     };
+            async function fetchMessages() {
+                console.log('in fetch')
+                const result = await axios.get("http://localhost:3000/getmessage",{headers:{'Authorization':token}})
+                console.log('after get')
+                console.log(result)
+                let messages = JSON.parse(localStorage.getItem('messages')) || [];
+                let lastMessageId = messages.length > 0 ? messages[messages.length - 1].id : undefined;
+                axios.get("http://localhost:3000/getmessage",{headers:{'Authorization':token}}, { params: { lastMessageId: lastMessageId }})
+                .then((response) => {
+                    console.log('data rcvd', response.data)
+                    messages = [...messages, ...response.data];
+                    if (messages.length > 10) {
+                        messages = messages.slice(-10);
+                    }
+                    localStorage.setItem('messages', JSON.stringify(messages));
+                    const msgs = document.getElementById("msgs");
+                    msgs.innerHTML = '';
+                    messages.forEach((message) => {
+                        const msgDiv = document.createElement("div");
+                        msgDiv.textContent = message.user.name;
+                        msgDiv.textContent += ':    ';
+                        msgDiv.textContent +=  message.message;
+                        msgs.appendChild(msgDiv);
+                    });
+                }).catch(err=> console.log('error fetching messages' , err));
+            }
+           //setInterval(fetchMessages, 1000);
+           fetchMessages()
+        };
+
+                    
+
+     
     </script>
 </body>
 </html>

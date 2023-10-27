@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const { Op } = require('sequelize');
 const path = require('path');
 const sequelize = require('../util/database');
 const Message = require('../models/message')
@@ -25,7 +26,7 @@ exports.send = async(req, res) => {
 
 exports.getmessage = async (req, res) => {
     try{
-        
+        console.log('in controller get')
         const result = await Message.findAll({
             attributes:['message'],
             include: [
@@ -34,15 +35,20 @@ exports.getmessage = async (req, res) => {
                 attributes: ['name'], // Include only the 'userName' attribute from the User model
               },
             ],
-          })
-        //   const stringresult = JSON.stringify(result)
-        //   console.log(stringresult)
-        res.status(200).json(result)
-    }
-    catch(err){
-        console.log(err)
-    }
-
+        })
+          
+        const lastMessageId = req.params.lastMessageId;
+        console.log('last message id : ' , lastMessageId) ;
+        let messages;
+        if (lastMessageId) {
+            messages = await Message.findAll({ where: { id: { [Op.gt]: lastMessageId } } } );
+        }else{
+            messages = await Message.findAll();
+        }
+        res.send(result,messages);
+    }catch(err){
+        console.log(err);
+}
 }
 
 
