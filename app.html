@@ -18,7 +18,7 @@
             <div class="card-body" id="msgs"></div>
         </div>
         <form onsubmit="submitfunc(event)" >
-            <div id="display"></div>
+            <div id="msgs"></div>
             <input type="text" class="form-control mr-2" id="msginput" name="msg" placeholder="Type your message here...">
             <button type="submit" class="btn btn-primary">Send Message</button>
         </form>
@@ -43,42 +43,47 @@
                 console.log('>>', message)
                 try{
                 const chat = await axios.post('http://localhost:3000/sendmessage', obj,{headers:{"Authorization":token}})
-                location.reload()
+                //location.reload()
                 //
             }
             catch(err){
                 console.log(err)
             }
                 
-            }
+            }           
+       
 
-            function display(data){
-                const name = data.user.name
-                console.log('check',name)
-                const message = data.message
-                
-                const p = document.createElement('p')
-                p.textContent = name+ ' : '+ message
-                document.getElementById('display').appendChild(p) 
-                document.getElementById('msginput').value = ''
-
-           
-        }
-
-        window.addEventListener('DOMContentLoaded', async()=>{
-           const result = await axios.get('http://localhost:3000/getmessage',{headers:{Authorization:token}})
-           const data = result.data 
-
-           console.log(data[0].message)
-           console.log(data[0].user.name)
-           if(data.length ===0)
-                alert('no messages to display')
-           for(let i=0; i<data.length; i++){
-                display(data[i])
-           }
-           
-        })
+    // window.onload = function() {
+    //         axios.get("http://localhost:3000/getMessage",{headers:{Authorization:token}})
+    //         .then((response) => {
+    //                 const msgs = document.getElementById("msgs");
+    //                 response.data.forEach((message) => {
+    //                     const msgDiv = document.createElement("div");
+    //                     msgDiv.textContent = message.user.name+' :  '+message.message;
+                       
+    //                     msgs.appendChild(msgDiv);
+    //                 });
+    //         }).catch(err=> console.log('error fetching messages' , err));
+    //     };
     
+
+    // window.onload = function() {
+           
+    //         function fetchMessages() {
+    //             axios.get("http://localhost:3000/getmessage",{headers:{'Authorization':token}})
+    //             .then((response) => {
+    //                 const msgs = document.getElementById("msgs");
+    //                 msgs.innerHTML = '';
+    //                 response.data.forEach((message) => {
+    //                     const msgDiv = document.createElement("div");
+    //                     msgDiv.textContent = message.user.name+' :  '+ message.message;
+    //                     msgs.appendChild(msgDiv);
+    //                 });
+           
+    //             }).catch(err=> console.log('error fetching messages' , err));
+    //         }
+    //         setInterval(fetchMessages, 1000);
+    //     };
     </script>
 </body>
 </html>
