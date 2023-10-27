@@ -10,11 +10,13 @@ exports.app = (req,res,next)=>{
 exports.send = async(req, res) => {
     try{
         const message = req.body.message
+        const name = req.user.name
+        console.log('..>>',message)
         Message.create({message:message,userId:req.user.id})
-        res.status(201).json({message:"message added"})
+        res.status(201).json({message:"message added",name})
     }
     catch(err){
-        console.log(err)
+        //console.log(err)
         res.status(400).json({message:"error"})
     }
 

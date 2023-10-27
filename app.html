@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatapp</title>
+    
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -16,23 +17,56 @@
         <div class="card">
             <div class="card-body" id="msgs"></div>
         </div>
-        <form action="" class="form-inline mt-3" id="msg">
+        <form onsubmit="submitfunc(event)" >
+            <div id="display"></div>
             <input type="text" class="form-control mr-2" id="msginput" name="msg" placeholder="Type your message here...">
-            <button type="submit" class="btn btn-primary" id="sdmsg">Send Message</button>
+            <button type="submit" class="btn btn-primary">Send Message</button>
         </form>
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        document.getElementById('msg').addEventListener('submit', async(e)=>{
-            e.preventDefault()
-            console.log('sending message')
-            const token = localStorage.getItem('token')
-            const message = document.getElementById('sdmsg').value
+        async function submitfunc(event){
+            
+                event.preventDefault()
+                
+                console.log('sending message')
+                const token = localStorage.getItem('token')
+                
+                const message = document.getElementById('msginput').value
+                const obj ={
+                    message
+                }
+                
+                console.log('>>', message)
+                try{
+                const chat = await axios.post('http://localhost:3000/sendmessage', obj,{headers:{"Authorization":token}})
+                display(chat.data)
+                //
+            }
+            catch(err){
+                console.log(err)
+            }
+                
+            }
 
-            await axios.post('http://localhost:3000/sendmessage', message,{headers:{"Authorization":token}})
+            function display(data){
+                
+                const text = document.getElementById('msginput').value
+                
+                const p = document.createElement('p')
+                p.textContent = `${data.name}`+ ' : '+ text
+                document.getElementById('display').appendChild(p) 
+                document.getElementById('msginput').value = ''
+
+           
+        }
+
+        window.addEventListener('DOMContentLoaded', async()=>{
+            
         })
+    
     </script>
 </body>
 </html>
