@@ -22,3 +22,27 @@ exports.send = async(req, res) => {
 
 
 }
+
+exports.getmessage = async (req, res) => {
+    try{
+        
+        const result = await Message.findAll({
+            attributes:['message'],
+            include: [
+              {
+                model: User,
+                attributes: ['name'], // Include only the 'userName' attribute from the User model
+              },
+            ],
+          })
+        //   const stringresult = JSON.stringify(result)
+        //   console.log(stringresult)
+        res.status(200).json(result)
+    }
+    catch(err){
+        console.log(err)
+    }
+
+}
+
+
