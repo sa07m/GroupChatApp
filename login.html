@@ -18,7 +18,7 @@
                 <input type="password" class="form-control" id="password" placeholder="Enter password" name="pswd">
             </div>
 	       
-            <button type="submit" id="submitbtn" >Sign Up</button>
+            <button type="submit" id="submitbtn" >Login</button>
            
         </form>
         <a href="/">Switch to Sign up</a>
@@ -43,7 +43,7 @@
                 const res = await axios.post('http://localhost:3000/login', data);
                 alert('user logged in successfully')
                 localStorage.setItem('token',res.data.token);
-                    //window.location.href='/app';
+                    window.location.href='/app';
                 //console.log(res);
                 
                 } catch (error) {

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatapp</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-3">
+        <a class="navbar-brand" href="#">Chat App</a>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body" id="msgs"></div>
+        </div>
+        <form action="" class="form-inline mt-3" id="msg">
+            <input type="text" class="form-control mr-2" id="msginput" name="msg" placeholder="Type your message here...">
+            <button type="submit" class="btn btn-primary" id="sdmsg">Send Message</button>
+        </form>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.getElementById('msg').addEventListener('submit', async(e)=>{
+            e.preventDefault()
+            console.log('sending message')
+            const token = localStorage.getItem('token')
+            const message = document.getElementById('sdmsg').value
+
+            await axios.post('http://localhost:3000/sendmessage', message,{headers:{"Authorization":token}})
+        })
+    </script>
+</body>
+</html>
