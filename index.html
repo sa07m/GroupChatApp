@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <form id="form">
+            <div class="form-group" id="namegroup">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+            </div>
+	    <div class="form-group" id="phonegroup" >
+                <label for="phone">Phone no.:</label>
+                <input type="number" class="form-control" id="phone" placeholder="Enter phone no. " name="phone">
+            </div>
+            <button type="submit" id="actionbtn" class="btn btn-primary">Sign Up</button>
+            <button  id="forgotbtn" class="btn btn-outline-secondary">Forgot Password</button>
+        </form>
+        <a href="#" id="toggleform">Switch to LOGIN</a>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+        let isSignUp = true;
+
+        document.getElementById('actionbtn').addEventListener('click', async function (event) {
+            event.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('pwd').value,
+                password: document.getElementById('phone').value,
+            };
+            if (isSignUp) {
+                try {
+                const res = await axios.post(`${API_BASE_URL}/signup`, data);
+                console.log(res);
+
+                } catch (error) {
+                console.error('Error sign up:', error);
+                }
+            }else{
+                try {
+                const res = await axios.post(`${API_BASE_URL}/login`, data);
+                console.log(res);
+                if(res.status===200){
+                    localStorage.setItem('token',res.data.token);
+                    window.location.href='/app';
+                }
+
+                } catch (error) {
+                console.error('Error login:', error);
+                }
+            }    
+        });
+
+        document.getElementById('forgotbtn').addEventListener('click', async function (event) {
+            event.preventDefault();
+            window.location.href='/forgotpassword';  
+        });
+
+        document.getElementById('toggleform').addEventListener('click', function (event) {
+            event.preventDefault();
+            isSignUp = !isSignUp;
+            // document.getElementById('formTitle').textContent = isSignUp ? 'Sign Up' : 'Login';
+            document.getElementById('actionbtn').textContent = isSignUp ? 'Sign Up' : 'Login';
+            document.getElementById('toggleform').textContent = isSignUp ? 'Switch to Login' : 'Switch to Sign Up';
+            document.getElementById('namegroup').style.display = isSignUp ? 'block' : 'none' ;
+	        document.getElementById('phonegroup').style.display = isSignUp ? 'block' : 'none' ;
+        });
+    </script>
+</body>
+</html>
