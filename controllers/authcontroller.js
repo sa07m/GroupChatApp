@@ -17,7 +17,7 @@ exports.signup = async (req,res,next)=>{
         }
         const users = await User.findAll({where: {email:email}});
         if(users[0]){
-                return res.status(403).json({msg : "E-mail already in use"})
+                return res.status(403).json({msg : "User already exists, Please Login"})
         }
         const userss = await User.findAll({where: {phone:phone}});
         if(userss[0]){

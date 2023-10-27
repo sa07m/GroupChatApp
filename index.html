@@ -27,7 +27,7 @@
             <button type="submit" id="submitbtn" >Sign Up</button>
             <button  id="forgotbtn" >Forgot Password</button>
         </form>
-        <a href="#" id="loginpage">Switch to LOGIN</a>
+        <a href="/login">Switch to LOGIN</a>
     </div>
    
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -48,20 +48,25 @@
                     
                 const res = await axios.post('http://localhost:3000/signup', data);
                 alert('user created successfully')
-                //console.log(res);
+                window.href='/login'
                 
                 } catch (error) {
-                console.error('Error sign up:', error);
+                    if(error.response.status===403){
+                    const errorMessage = error.response.data.msg
+                    alert(errorMessage)
+                    }
                 }
             }else{
                 try {
                 const res = await axios.post('http://localhost:3000/login', data);
                 console.log(res);
-                alert('user logged in successfully')
+               
                 if(res.status===200){
+                     alert('user logged in successfully')
                     localStorage.setItem('token',res.data.token);
                     window.location.href='/app';
                 }
+                
 
                 } catch (error) {
                 console.error('Error login:', error);
@@ -77,16 +82,7 @@
             window.location.href='/forgotpassword';  
         });
 
-        document.getElementById('loginpage').addEventListener('click', function (event) {
-            event.preventDefault();
-            isSignUp = !isSignUp;
-            document.getElementById('formTitle').textContent = isSignUp ? 'Sign Up' : 'Login';
-            document.getElementById('submitbtn').textContent = isSignUp ? 'Sign Up' : 'Login';
-            document.getElementById('loginpage').textContent = isSignUp ? 'Switch to Login' : 'Switch to Sign Up';
-            document.getElementById('namegroup').style.display = isSignUp ? 'block' : 'none' ;
-	        document.getElementById('phonegroup').style.display = isSignUp ? 'block' : 'none' ;
-            
-        });
+        
     </script>
 </body>
 </html>
