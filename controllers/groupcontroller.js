@@ -10,7 +10,8 @@ exports.createGroup = async (req, res, next) => {
             return res.status(400).json({ success: false, error: 'Group already exists' });
         }
         group = await Group.create({ name: groupName });
-        await GroupUser.create({ userId: req.user.id, groupId: group.id });
+       // await GroupUser.create({ userId: req.user.id, groupId: group.id });
+       await GroupUser.create({ userId: req.user.id, groupId: group.id  , isAdmin : true });
         res.status(201).json({ success: true, group });
     } catch (err) {
         console.log(err);

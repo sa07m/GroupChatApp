@@ -6,5 +6,8 @@ const Group = sequelize.define('group' , {
     name : {type : Sequelize.STRING, allowNull:false},
 });
 
+Group.associate = function(models) {
+    Group.hasMany(models.GroupUser, { foreignKey: 'groupId' });
+};
 
 module.exports = Group;

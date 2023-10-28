@@ -50,11 +50,11 @@
                 window.location.href='/login'
                 
                 } catch (error) {
-                    if(error.response.status===403){
-                    const errorMessage = error.response.data.msg
-                    alert(errorMessage)
+                   // if(error.response.status===403){
+                   // const errorMessage = error.response.data.msg
+                    console.log(error)
                     }
-                }
+                
             })
             
                 

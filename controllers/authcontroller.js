@@ -57,12 +57,14 @@ exports.login = async (req,res,next)=>{
         
         if(users[0]){
             const user = users[0];
+            const userid = users[0].dataValues.id;
+            console.log('userid : ' , userid);
             bcrypt.compare(password,user.password , async  (err, response )=>{
                 if(response == true){
                     const token =  await jwt.sign({ id: user.id , ispremiumuser : user.ispremiumuser }, process.env.TOKEN_SECRET);
                     res.status(200).json({
                         message: 'Login successful',
-                        //user: { username: req.body.username  },
+                        user: { username: req.body.username  },
                         token : token
                      });
                 }else{
