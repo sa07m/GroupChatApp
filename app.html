@@ -5,103 +5,161 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatapp</title>
-    
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark mb-3">
-        <a class="navbar-brand" href="#">Chat App</a>
-    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3 bg-light" id="groupList">
+                <form  class="m-3" id="createGroupForm">
+                    <input type="text" id="groupNameInput" placeholder="Enter group name...">
+                    <button type="submit">Create Group</button>
+                </form>
+                <form  class="m-3" id="joinGroupForm">
+                    <input type="text" id="groupJoinInput" placeholder="Enter group name...">
+                    <button type="submit">Join Group</button>
+                </form>
+                <ul id="groups"></ul>
+            </div>
+            <div class="col-9">
+                <nav class="navbar navbar-dark bg-dark mb-3">
+                    <a class="navbar-brand" href="#" id="currentGroup">ChatApp</a>
+                    <div class="m-auto  text-primary text-capitalize  navbar-text" id="grpname">Public</div>
+                </nav>
 
-    <div class="container">
-        <div class="card">
-            <div class="card-body" id="msgs"></div>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body" id="msgs"></div>
+                    </div>
+                    <form action="" class="form-inline mt-3" id="msg">
+                        <input type="text" class="form-control mr-2" id="msginput" name="msg" placeholder="Type your message here...">
+                        <button type="submit" class="btn btn-primary" id="sendbtn">Send Message</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <form onsubmit="submitfunc(event)" >
-            <div id="msgs"></div>
-            <input type="text" class="form-control mr-2" id="msginput" name="msg" placeholder="Type your message here...">
-            <button type="submit" class="btn btn-primary">Send Message</button>
-        </form>
     </div>
-
+    
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        const token = localStorage.getItem('token')
-        async function submitfunc(event){
+        
+        const token = localStorage.getItem("token");
+        const sendmsg = document.getElementById("sendbtn");
+        const groupName = document.getElementById("grpname").textContent
+        sendmsg.addEventListener("click", (e) => {
+            e.preventDefault();
+            const message = document.getElementById("msginput").value;
+            const group = document.getElementById("grpname").textContent;
+            const token = localStorage.getItem("token");
+            let data = {
+                    message: message,
+                    groupName : group ,
+            };
+            axios.post("http://localhost:3000/send", data, {headers: { Authorization: token },})
+            .then(() => {
+                    document.getElementById("msginput").value = "";
+             });
+        });
+
+        let fetchMessagesInterval;
+
+        function fetchMessages(groupName) {
             
-                event.preventDefault()
-                
-                console.log('sending message')
-                
-                
-                const message = document.getElementById('msginput').value
-                const obj ={
-                    message
-                }
-                
-                console.log('>>', message)
-                try{
-                const chat = await axios.post('http://localhost:3000/sendmessage', obj,{headers:{"Authorization":token}})
-                //location.reload()
-                //
+            if (fetchMessagesInterval) {
+                clearInterval(fetchMessagesInterval);
             }
-            catch(err){
-                console.log(err)
-            }
-                
-            }           
-       
 
-    // window.onload = function() {
-    //         axios.get("http://localhost:3000/getMessage",{headers:{Authorization:token}})
-    //         .then((response) => {
-    //                 const msgs = document.getElementById("msgs");
-    //                 response.data.forEach((message) => {
-    //                     const msgDiv = document.createElement("div");
-    //                     msgDiv.textContent = message.user.name+' :  '+message.message;
-                       
-    //                     msgs.appendChild(msgDiv);
-    //                 });
-    //         }).catch(err=> console.log('error fetching messages' , err));
-    //     };
-    
-
-    window.onload = function() {
-           
-            async function fetchMessages() {
-                console.log('in fetch')
-                const result = await axios.get("http://localhost:3000/getmessage",{headers:{'Authorization':token}})
-                console.log('after get')
-                console.log(result)
-                let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            fetchMessagesInterval = setInterval(() => {
+                const groupName = document.getElementById("grpname").textContent
+                console.log('group : ' , groupName)
+                let messages = JSON.parse(localStorage.getItem(groupName)) || [];
                 let lastMessageId = messages.length > 0 ? messages[messages.length - 1].id : undefined;
-                axios.get("http://localhost:3000/getmessage",{headers:{'Authorization':token}}, { params: { lastMessageId: lastMessageId }})
+                axios.get(`http://localhost:3000/getGroupMessages/${groupName}`, { params: { lastMessageId: lastMessageId }})
                 .then((response) => {
                     console.log('data rcvd', response.data)
                     messages = [...messages, ...response.data];
                     if (messages.length > 10) {
-                        messages = messages.slice(-10);
+                    messages = messages.slice(-10);
                     }
-                    localStorage.setItem('messages', JSON.stringify(messages));
+                    localStorage.setItem(groupName, JSON.stringify(messages));
                     const msgs = document.getElementById("msgs");
                     msgs.innerHTML = '';
                     messages.forEach((message) => {
                         const msgDiv = document.createElement("div");
-                        msgDiv.textContent = message.user.name;
+                        msgDiv.textContent = message.username;
                         msgDiv.textContent += ':    ';
                         msgDiv.textContent +=  message.message;
                         msgs.appendChild(msgDiv);
                     });
                 }).catch(err=> console.log('error fetching messages' , err));
-            }
-           setInterval(fetchMessages, 1000);
-           fetchMessages()
+            }, 1000);
+        }
+
+        window.onload = function() {
+            fetchMessages('public');
+            fetchGroups();
         };
 
-                    
+        document.getElementById("groups").addEventListener("click", function(e) {
+            if (e.target && e.target.nodeName == "A") {
+                e.preventDefault();
+                const groupName = document.getElementById("grpname").textContent
+                localStorage.removeItem(groupName);
+                fetchMessages(e.target.textContent);
+                document.getElementById("grpname").textContent =e.target.textContent;
+            }
+        });
 
-     
+        const createGroupForm = document.getElementById("createGroupForm");
+        createGroupForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const groupName = document.getElementById("groupNameInput").value;
+            axios.post("http://localhost:3000/createGroup", { groupName } , {headers: { Authorization: token }})
+            .then(() => {
+                document.getElementById("groupNameInput").value = "";
+                fetchGroups();
+            })
+            .catch(err => console.log('Error creating group', err));
+        });
+
+        const joinGroupForm = document.getElementById("joinGroupForm");
+        joinGroupForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const groupName = document.getElementById("groupJoinInput").value;
+            axios.post("http://localhost:3000/joinGroup", { groupName } , {headers: { Authorization: token }})
+            .then(() => {
+                document.getElementById("groupJoinInput").value = "";
+                fetchGroups();
+            })
+            .catch(err => console.log('Error joining group', err));
+        });
+
+        function fetchGroups() {
+            const token = localStorage.getItem("token");
+            axios.get("http://localhost:3000/getGroups", { headers: { Authorization: token }} )
+            .then((response) => {
+                console.log('groups response' , response)
+                const groups = document.getElementById("groups");
+                groups.innerHTML = '';
+                response.data.groups.forEach((group) => {
+                    const groupLink = document.createElement("a");
+                    groupLink.href ="#"; 
+                    groupLink.className = "list-group-item list-group-item-action";
+                    groupLink.textContent = group.name;
+                    groups.appendChild(groupLink);
+                });
+            })
+            .catch(err => console.log('Error fetching groups', err));
+        }
+
+
+
+
+
+
     </script>
+
 </body>
 </html>

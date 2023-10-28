@@ -2,6 +2,8 @@ const User = require('../models/user');
 const path = require('path');
 const bcrypt =  require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Group =require('../models/group');
+const GroupUser = require('../models/groupuser');
 
 
 
@@ -30,7 +32,9 @@ exports.signup = async (req,res,next)=>{
         }
 
                 bcrypt.hash(password , 10 , async ( err , hash)=>{
-                    await User.create({name:name , email : email , password : hash , phone:phone})
+                    const user = await User.create({name:name , email : email , password : hash , phone:phone})
+                    const publicGroup = await Group.findOne({ where: { name: 'public' } });
+                    await GroupUser.create({ userId: user.id, groupId: publicGroup.id });
                     res.status(201).json({message : 'signed up successfully'})
                 })
                 
