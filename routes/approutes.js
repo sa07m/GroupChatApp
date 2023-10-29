@@ -2,6 +2,7 @@ const express = require('express');
 const appcontroller = require('../controllers/appcontroller');
 const authmiddleware = require('../middleware/auth');
 const groupcontroller = require('../controllers/groupcontroller');
+const admincontroller = require('../controllers/admincontroller');
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get('/app',appcontroller.app);
 router.post('/send',authmiddleware.authenticate,appcontroller.send)
 //router.get('/getmessage',authmiddleware.authenticate,appcontroller.getmessage)
 router.get('/getGroupMessages/:groupName' , appcontroller.getmessages); 
-const admincontroller = require('../controllers/admincontroller');
+
 
 
 router.get('/getGroups' ,authmiddleware.authenticate, groupcontroller.getUserGroups); 

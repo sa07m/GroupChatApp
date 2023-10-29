@@ -4,13 +4,13 @@ const User = require('../models/user')
 exports.authenticate = (req,res,next)=>{
     try{
         const token = req.header('Authorization');
-        console.log('token aaya ' , token);
+       // console.log('token ' , token);
         const user = jwt.verify(token ,process.env.TOKEN_SECRET );
         const userid = user.id;
        
         User.findByPk(userid).then(
             user=>{
-                console.log('user mila' , user);
+                //console.log('user ' , user);
                 req.user=user;
                 next();
             }
