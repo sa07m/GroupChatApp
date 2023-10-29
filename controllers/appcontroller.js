@@ -9,9 +9,6 @@ exports.app = (req,res,next)=>{
     res.sendFile(path.join(__dirname,  '../app.html'));
 }
 
-// exports.try = (req,res,next)=>{
-//     res.sendFile(path.join(__dirname,  '../try.html'));
-// }
 
 
 exports.send = async(req, res) => {
@@ -49,7 +46,7 @@ exports.getmessages = async (req, res) => {
         }
         let messages;
         if (lastMessageId) {
-           // messages = await Message.findAll({ where: { id: { [Op.gt]: lastMessageId } } } );
+           
             messages = await Message.findAll({ where: { id: { [Op.gt]: lastMessageId } , groupId: group.id} } );
         }else{
            // messages = await Message.findAll();

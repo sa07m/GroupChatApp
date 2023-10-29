@@ -1,4 +1,6 @@
 require('dotenv').config()
+const http = require("http");
+const {Server}= require('socket.io');
 const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
@@ -19,6 +21,15 @@ app.use(express.static('public'));
 app.use(authroutes);
 app.use(approutes)
 
+const server = http.createServer(app);
+const io = new Server(server);
+io.on('connection', socket=>{
+    console.log('a new user has connected' , socket.id);
+    socket.on('newMessage',(msg)=>{
+        io.emit('newMessage' , msg)
+    })
+})
+
 User.hasMany(Message);
 Group.hasMany(Message);
 Message.belongsTo(User);
@@ -36,6 +47,8 @@ Group.findOrCreate({ where: { name: 'public' } })
     })
     .catch(err => console.log(err));
 
+    module.exports.io = io;
+
 //sequelize.sync({force:true})
 sequelize.sync()
 
@@ -48,6 +61,7 @@ sequelize.sync()
     } else {
         console.log('Public group already exists');
     }
-    return app.listen(process.env.PORT || 3000);
+    //return app.listen(process.env.PORT || 3000);
+    return server.listen(process.env.PORT || 3000);
 })
 .catch(err=> console.log(err));
