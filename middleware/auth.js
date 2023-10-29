@@ -4,7 +4,7 @@ const User = require('../models/user')
 exports.authenticate = (req,res,next)=>{
     try{
         const token = req.header('Authorization');
-       // console.log('token ' , token);
+       console.log('token ' , token);
         const user = jwt.verify(token ,process.env.TOKEN_SECRET );
         const userid = user.id;
        

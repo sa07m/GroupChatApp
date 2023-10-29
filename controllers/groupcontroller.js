@@ -41,6 +41,7 @@ exports.joinGroup = async (req, res, next) => {
 
 exports.getUserGroups = async (req, res, next) => {
     try {
+        console.log('in control getusergrou')
         const result = await User.findOne({
             where: { id: req.user.id },
             include: [{
@@ -51,7 +52,7 @@ exports.getUserGroups = async (req, res, next) => {
         if (!result) {
             return res.status(404).json({ success: false, error: 'User not found' });
         }
-        console.log('usergroup result:' , result.dataValues.groups)
+        console.log('usergroup result:>>' , result.dataValues.groups)
         res.status(200).json({ success: true, groups: result.dataValues.groups });
     } catch (err) {
         console.log(err);

@@ -95,8 +95,9 @@
                 let lastMessageId = messages.length > 0 ? messages[messages.length - 1].id : undefined;
                 axios.get(`http://localhost:3000/getGroupMessages/${groupName}`, { params: { lastMessageId: lastMessageId }})
                 .then((response) => {
-                    console.log('data rcvd', response.data)
+                   
                     messages = [...messages, ...response.data];
+                    console.log('>>>data rcvd', messages)
                     if (messages.length > 10) {
                     messages = messages.slice(-10);
                     }
@@ -171,7 +172,7 @@
 
         function fetchGroups() {
             const token = localStorage.getItem("token");
-            axios.get("http://localhost:3000/getGroups", { headers: { Authorization: token }} )
+            axios.get("http://localhost:3000/getGroups", { headers: { 'Authorization': token }} )
             .then((response) => {
                 console.log('groups response' , response)
                 const groups = document.getElementById("groups");
